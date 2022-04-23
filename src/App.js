@@ -1,23 +1,43 @@
-import logo from './logo.svg';
 import './App.css';
+import { useSelector } from 'react-redux';
+import Header from './components/Header';
+import List from './components/List';
+import Filter from './components/Filter';
+import ClearCompleted from './components/ClearCompleted';
 
 function App() {
+  const items = useSelector((store) => store.todos.items);
+  const itemsLeft = items.filter(item => item.completed === false)
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <section className="todoapp">
+        <Header />
+        <section className="main">
+          <input className="toggle-all" type="checkbox" />
+          <label htmlFor='toggle-all'>
+            Mark all as complete
+          </label>
+
+          <List />
+        </section>
+
+        <footer className="footer">
+          <span className="todo-count">
+            <strong>{itemsLeft.length}</strong>
+            {' '}
+            item{itemsLeft.length > 1 && 's' } left
+          </span>
+          <Filter />
+          <ClearCompleted />
+        </footer>
+      </section>
+
+      <footer className="info">
+        <p>Click to edit a todo</p>
+        <p>Created by <a href="https://d12n.me/">Dmitry Sharabin</a></p>
+        <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+      </footer>
     </div>
   );
 }
