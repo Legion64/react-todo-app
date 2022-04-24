@@ -8,7 +8,7 @@ function Header() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        dispatch(addItem(title))
+        dispatch(addItem({ title }))
         setTitle('')
     }
 
