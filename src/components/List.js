@@ -1,11 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ListItem from './ListItem'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { getTodosAsync } from '../redux/todos/todosSlice'
+import Loading from './Loading'
+import Error from './Error'
 
 function List() {
-    let filteredItems = []  
+    let filteredItems = []
     const items = useSelector(state => state.todos.items)
-    const filterName = useSelector(state => state.todos.filterName)
+    const { filterName, isLoading, error } = useSelector(state => state.todos)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(getTodosAsync())
+    }, [])
 
     switch (filterName) {
         case 'active':
@@ -18,6 +26,16 @@ function List() {
             filteredItems = items
             break;
     }
+
+    if (isLoading)
+        return (
+            <Loading />
+        )
+
+    if (error)
+        return (
+            <Error message={error} />
+        )
 
     return (
         <ul className="todo-list">

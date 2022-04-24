@@ -1,25 +1,16 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createSlice, nanoid, createAsyncThunk } from "@reduxjs/toolkit";
+
+export const getTodosAsync = createAsyncThunk('todos/getTodosAsync', async () => {
+    const res = await fetch('http://localhost:7000/todos');
+    return await res.json();
+})
 
 export const todoSlice = createSlice({
     name: "todo",
     initialState: {
-        items: [
-            {
-                id: 1,
-                title: "Learn JavaScript",
-                completed: false
-            },
-            {
-                id: 2,
-                title: "Learn React",
-                completed: true
-            },
-            {
-                id: 3,
-                title: "Have a life!",
-                completed: false
-            }
-        ],
+        items: [],
+        isLoading: false,
+        error: null,
         filterName: 'all'
     },
     reducers: {
@@ -53,6 +44,20 @@ export const todoSlice = createSlice({
         removeCompleted(state){
             state.items = state.items.filter(item => item.completed !== true)
         }
+    },
+    extraReducers: {
+        [getTodosAsync.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [getTodosAsync.fulfilled]: (state, action) => {
+            state.items = action.payload;
+            state.isLoading = false;
+        },
+        [getTodosAsync.rejected]: (state, action) => {
+            state.error = action.error.message;
+            state.isLoading = false;
+        }
+
     }
 })
 
